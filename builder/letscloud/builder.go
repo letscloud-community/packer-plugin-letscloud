@@ -3,6 +3,7 @@ package letscloud
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/hashicorp/hcl/v2/hcldec"
 	"github.com/hashicorp/packer-plugin-sdk/communicator"
@@ -36,6 +37,9 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 	sdkClient, err := letscloud.New(b.config.APIKey)
 	if err != nil {
 		return nil, fmt.Errorf("unable to initialize LetsCloud client: %v", err)
+	}
+	if err := sdkClient.SetTimeout(60 * time.Second); err != nil {
+		ui.Error(fmt.Sprintf("Failed to set timeout: %v", err))
 	}
 
 	// Setup the state bag and initial state for the steps
