@@ -1,10 +1,8 @@
 module github.com/letscloud-community/packer-plugin-letscloud
 
-// replace github.com/letscloud-community/packer-plugin-letscloud => ./packer-plugin-letscloud
-
 go 1.21.0
 
-toolchain go1.23.3
+toolchain go1.22.4
 
 require (
 	github.com/hashicorp/hcl/v2 v2.19.1
