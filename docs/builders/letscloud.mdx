@@ -1,0 +1,40 @@
+Type: `letscloud`
+
+The letscloud builder is used to create new images for use with
+LetsCloud.
+
+**Required**
+- `api_key` (string) - The LetsCloud API Key to use to access your account. 
+- `location_slug` (string) - The Slug of the location to launch the instance.
+- `plan_slug` (string) - The Slug of the instance size.
+- `image_slug` (string) - The Slug of the base image to use.
+
+All references about slugs can be obtained from our API.
+https://developers.letscloud.io/
+
+**Optional**
+- `snapshot_name` (string) The name of the resulting snapshot that will appear in your account. Default is packer-{{timestamp}}
+- `label` (string) The name assigne to the Instance.
+- `hostname` (string) The hostname assignet to the Instance.
+- `keep_instance` (bool) To keep the instance before the process complete. Default is false.
+
+### Example Usage
+
+```hcl
+source "letscloud" "example" {
+  api_key              = "YOUR API KEY"
+  location_slug        = "mia1"
+  plan_slug            = "1vcpu-1gb-10ssd"
+  image_slug           = "ubuntu-24.04-x86_64"
+}
+
+build {
+  sources = ["source.letscloud.example"]
+}
+```
+
+### Communicator Config
+
+In addition to the builder options, a
+[communicator](/docs/templates/legacy_json_templates/communicator) can be configured for this builder.
+

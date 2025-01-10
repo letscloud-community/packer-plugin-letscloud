@@ -1,17 +1,26 @@
 packer {
   required_plugins {
     letscloud = {
-      version = ">= 0.0.1"
+      version = ">= 0.1.0"
       source  = "github.com/letscloud-community/letscloud"
     }
   }
 }
 
-source "letscloud" "hello" {
-  token  = "seu_token_aqui"
-  region = "br-sao"
+source "letscloud" "example" {
+  api_key              = "YOUR-API-KEY"
+  location_slug        = "mia1"
+  plan_slug            = "1vcpu-1gb-10ssd"
+  image_slug           = "ubuntu-24.04-x86_64"
 }
 
 build {
-  sources = ["source.letscloud.hello"]
+  sources = ["source.letscloud.example"]
+
+  provisioner "shell" {
+    inline = [
+      "echo Hello World",
+    ]
+  }
+
 }

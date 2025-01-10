@@ -1,11 +1,14 @@
-module github.com/hashicorp/packer-plugin-scaffolding
+module github.com/letscloud-community/packer-plugin-letscloud
 
-go 1.21.0
+// replace github.com/letscloud-community/packer-plugin-letscloud => ./packer-plugin-letscloud
+
+go 1.23
 
 require (
 	github.com/hashicorp/hcl/v2 v2.19.1
 	github.com/hashicorp/packer-plugin-sdk v0.5.4
 	github.com/zclconf/go-cty v1.13.3
+	github.com/letscloud-community/letscloud-go v1.0.2	
 )
 
 require (
@@ -29,6 +32,7 @@ require (
 	github.com/gofrs/flock v0.8.1 // indirect
 	github.com/gofrs/uuid v4.0.0+incompatible // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/golang/mock v1.4.4 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
 	github.com/google/uuid v1.4.0 // indirect

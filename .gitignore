@@ -1,9 +1,9 @@
 main
-packer-plugin-scaffolding
+packer-plugin-letscloud
 **/packer_log*.txt
 **/git_*test.pkr.hcl
 crash.log
-
+**/packer.log
 dist/*
 .docs/*
 docs.zip
