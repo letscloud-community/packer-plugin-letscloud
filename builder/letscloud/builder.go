@@ -71,6 +71,10 @@ func (b *Builder) Run(ctx context.Context, ui packer.Ui, hook packer.Hook) (pack
 			sdkClient: sdkClient,
 			config:    &b.config,
 		},
+		&StepSnapshot{
+			sdkClient: sdkClient,
+			config:    &b.config,
+		},
 	}
 
 	// Run!

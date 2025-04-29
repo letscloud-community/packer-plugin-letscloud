@@ -5,7 +5,7 @@ go 1.23
 require (
 	github.com/hashicorp/hcl/v2 v2.19.1
 	github.com/hashicorp/packer-plugin-sdk v0.5.4
-	github.com/letscloud-community/letscloud-go v1.0.2
+	github.com/letscloud-community/letscloud-go v1.2.0
 	github.com/zclconf/go-cty v1.13.3
 )
 
