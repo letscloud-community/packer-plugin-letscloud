@@ -16,38 +16,47 @@ import (
 	"github.com/letscloud-community/letscloud-go/domains"
 )
 
-// generateRandomPassword creates a secure random password of the specified length.
+// generateRandomPassword generates a secure password with at least one lowercase letter, one uppercase letter, one number, and one special character.
 func generateRandomPassword(length int) (string, error) {
 	if length < 8 {
 		return "", errors.New("length must be at least 8")
 	}
 
-	charsets := []string{
-		"abcdefghijklmnopqrstuvwxyz",
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-		"0123456789",
-		"!@#$*={}",
-	}
+	// Character sets
+	lowercase := "abcdefghijklmnopqrstuvwxyz"
+	uppercase := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	numbers := "0123456789"
+	specials := "!@#$={}"
+	allChars := lowercase + uppercase + numbers + specials
 
+	// Ensure at least one character from each set
 	password := make([]byte, length)
+	charsets := []string{lowercase, uppercase, numbers, specials}
 
+	// Ensure at least one character from each required set
 	for i, charset := range charsets {
 		index, _ := rand.Int(rand.Reader, big.NewInt(int64(len(charset))))
 		password[i] = charset[index.Int64()]
 	}
 
-	allChars := charsets[0] + charsets[1] + charsets[2] + charsets[3]
+	// Fill the remaining characters randomly
 	for i := 4; i < length; i++ {
 		index, _ := rand.Int(rand.Reader, big.NewInt(int64(len(allChars))))
 		password[i] = allChars[index.Int64()]
 	}
 
-	for i := range password {
-		j, _ := rand.Int(rand.Reader, big.NewInt(int64(length)))
-		password[i], password[j.Int64()] = password[j.Int64()], password[i]
-	}
+	// Shuffle the password to avoid predictable placements
+	shuffle(password)
 
 	return string(password), nil
+}
+
+// shuffle randomly shuffles a byte slice in-place
+func shuffle(password []byte) {
+	for i := range password {
+		j, _ := rand.Int(rand.Reader, big.NewInt(int64(len(password))))
+		password[i], password[j.Int64()] = password[j.Int64()], password[i]
+	}
 }
 
 // waitForInstanceCreation polls the Instances API to find the created instance.
@@ -75,12 +84,40 @@ func waitForInstanceCreation(ui packer.Ui, sdkClient *letscloud.LetsCloud, label
 					if inst.Built && !inst.Locked && !inst.Suspended {
 						return &inst, nil
 					}
-					// Instance is found but not yet built or still locked/suspended; continue waiting.
-					ui.Say("Instance is found but not yet built or still locked/suspended. Waiting...")
+					ui.Message("Instance is not yet built or still locked. Waiting...")
 				}
 			}
 		case <-timeoutChan:
 			return nil, fmt.Errorf("timed out waiting for instance to be built")
+		}
+	}
+}
+
+func waitForSnapshotCreation(ui packer.Ui, sdkClient *letscloud.LetsCloud, slug string, timeout time.Duration) error {
+	ui.Say(fmt.Sprintf("Waiting for snapshot '%s' to finish building...", slug))
+
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	timeoutChan := time.After(timeout)
+
+	for {
+		select {
+		case <-ticker.C:
+			snapshot, err := sdkClient.Snapshot(slug)
+			if err != nil {
+				ui.Message(fmt.Sprintf("Error checking snapshot status: %s", err))
+				continue
+			}
+
+			if snapshot.Build {
+				ui.Say(fmt.Sprintf("Snapshot '%s' is now ready.", slug))
+				return nil
+			}
+			ui.Message("Snapshot still building...")
+
+		case <-timeoutChan:
+			return fmt.Errorf("snapshot '%s' did not finish building within %s", slug, timeout.String())
 		}
 	}
 }

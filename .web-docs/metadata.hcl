@@ -5,9 +5,9 @@
 # This metadata.hcl file and the adjacent `components` docs directory should
 # be kept in a `.web-docs` directory at the root of your plugin repository.
 integration {
-  name = "Integration Template"
+  name = "LetsCloud Integration"
   description = "This is an integration template"
-  identifier = "packer/hashicorp/scaffolding"
+  identifier = "packer/hashicorp/letscloud"
   flags = [
     # Remove if the plugin does not conform to the HCP Packer requirements.
     #
